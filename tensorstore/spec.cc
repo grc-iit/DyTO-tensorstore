@@ -25,10 +25,12 @@
 #include "tensorstore/util/garbage_collection/garbage_collection.h"
 #include "tensorstore/util/result.h"
 #include "tensorstore/util/status.h"
+#include <iostream>
 
 namespace tensorstore {
 
 absl::Status Spec::Set(SpecConvertOptions&& options) {
+  std::cout << "Spec::Set(SpecConvertOptions&& options)" << std::endl;
   internal::ApplyContextBindingMode(
       *this, options.context_binding_mode,
       /*default_mode=*/ContextBindingMode::retain);
@@ -41,6 +43,7 @@ absl::Status Spec::Set(SpecConvertOptions&& options) {
 }
 
 Result<Schema> Spec::schema() const {
+  std::cout << "Spec::schema()" << std::endl;
   return internal::GetEffectiveSchema(impl_);
 }
 
@@ -80,16 +83,21 @@ ContextBindingState Spec::context_binding_state() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Spec& spec) {
+  std::cout << "Printing the Spec object" << std::endl;
   Spec copy = spec;
   copy.UnbindContext();
+  std::cout << "Step 1: finished (copy.UnbindContext())" << std::endl;
   JsonSerializationOptions options;
   options.preserve_bound_context_resources_ = true;
+  std::cout << "Step 2: set preserve_bound_context_resources_" << std::endl;
   auto json_result = copy.ToJson(options);
+  std::cout << "Step 3: get the Json" << std::endl;
   if (!json_result.ok()) {
     os << "<unprintable spec: " << json_result.status() << ">";
   } else {
     os << json_result->dump();
   }
+  std::cout << "Step 4: Finish print" << std::endl;
   return os;
 }
 

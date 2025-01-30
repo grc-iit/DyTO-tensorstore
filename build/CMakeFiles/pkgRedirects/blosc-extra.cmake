@@ -1,0 +1,2 @@
+
+set(BLOSC_FOUND ON)

@@ -43,6 +43,7 @@
 #include "tensorstore/util/future.h"
 #include "tensorstore/util/garbage_collection/fwd.h"
 #include "tensorstore/util/result.h"
+#include <iostream>
 
 namespace tensorstore {
 namespace internal {
@@ -196,6 +197,7 @@ class DriverSpec : public internal::AtomicReferenceCount<DriverSpec> {
   virtual std::string_view GetId() const = 0;
 
   constexpr static auto ApplyMembers = [](auto&& x, auto f) {
+    std::cout << "DriverSpec::ApplyMembers....x.schema=" << x.schema.ToJson().value() << std::endl;
     // Exclude `context_binding_state_` because it is handled specially.
     return f(x.schema, x.context_spec_);
   };
@@ -259,6 +261,7 @@ struct TransformedDriverSpec {
   void StripContext() { DriverSpecStripContext(driver_spec); }
 
   constexpr static auto ApplyMembers = [](auto& x, auto f) {
+    std::cout << "TransformedDriverSpec::ApplyMembers" << std::endl;
     return f(x.driver_spec, x.transform);
   };
 };

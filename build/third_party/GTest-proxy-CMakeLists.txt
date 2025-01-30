@@ -1,0 +1,60 @@
+set(CMAKE_MESSAGE_INDENT "[GTest] ")
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_DEFINITIONS)
+set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_OPTIONS)
+set_property(DIRECTORY PROPERTY COMPILE_OPTIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY INCLUDE_DIRECTORIES)
+set_property(DIRECTORY PROPERTY INCLUDE_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_DIRECTORIES)
+set_property(DIRECTORY PROPERTY LINK_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_OPTIONS)
+set_property(DIRECTORY PROPERTY LINK_OPTIONS "${_prop}")
+unset(_prop)
+unset(gtest_BINARY_DIR)
+unset(gtest_SOURCE_DIR)
+
+project("GTest")
+execute_process(
+  COMMAND ${Python3_EXECUTABLE} "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore/tools/cmake/run_bazel_to_cmake.py"
+        --load-workspace "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore/build/bazel_workspace_info.pickle"
+        --cmake-project-name GTest
+        --cmake-binary-dir "${CMAKE_CURRENT_BINARY_DIR}"
+        --bazel-repo-name com_google_googletest
+        --build-rules-output "${CMAKE_CURRENT_BINARY_DIR}/build_rules.cmake"
+        --repo-mapping "@re2" "@com_google_re2"
+        --repo-mapping "@abseil-cpp" "@com_google_absl"
+        "--include-package="
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  COMMAND_ERROR_IS_FATAL ANY)
+include("${CMAKE_CURRENT_BINARY_DIR}/build_rules.cmake")
+
+get_property(_aliased TARGET GTest::gmock PROPERTY ALIASED_TARGET)
+get_property(_type TARGET GTest::gmock PROPERTY TYPE)
+if("${_aliased}" STREQUAL "")
+  set(_aliased "GTest::gmock")
+endif()
+if("${_type}" STREQUAL "EXECUTABLE")
+  add_executable(GTest::gtest ALIAS "${_aliased}")
+else()
+  add_library(GTest::gtest ALIAS "${_aliased}")
+endif()
+
+get_property(_aliased TARGET GTest::gmock_main PROPERTY ALIASED_TARGET)
+get_property(_type TARGET GTest::gmock_main PROPERTY TYPE)
+if("${_aliased}" STREQUAL "")
+  set(_aliased "GTest::gmock_main")
+endif()
+if("${_type}" STREQUAL "EXECUTABLE")
+  add_executable(GTest::gtest_main ALIAS "${_aliased}")
+else()
+  add_library(GTest::gtest_main ALIAS "${_aliased}")
+endif()

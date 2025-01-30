@@ -1,0 +1,2 @@
+
+set(ABSL_FOUND ON)

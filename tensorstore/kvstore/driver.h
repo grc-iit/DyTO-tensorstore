@@ -375,6 +375,7 @@ template <typename... Option>
 static std::enable_if_t<
     IsCompatibleOptionSequence<DriverOpenOptions, Option...>, Future<DriverPtr>>
 Open(DriverSpecPtr spec, Option&&... option) {
+  std::cout << "internal_kvstore's Open DriverSpecPtr.....1" << std::endl;
   DriverOpenOptions options;
   internal::SetAll(options, std::forward<Option>(option)...).IgnoreError();
   return Open(std::move(spec), std::move(options));

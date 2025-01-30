@@ -89,15 +89,17 @@ Future<Driver::Handle> OpenDriver(OpenTransactionPtr transaction, Batch batch,
 Future<Driver::Handle> OpenDriver(TransformedDriverSpec bound_spec,
                                   DriverOpenRequest request) {
   DriverSpecPtr ptr = bound_spec.driver_spec;
-
+  std::cout << "Inside tensorstore::internal::OpenDriver(TransformedDriverSpec bound_spec, DriverOpenRequest request)" << std::endl;
   return MapFuture(
       InlineExecutor{},
       [bound_spec = std::move(bound_spec)](
           Result<Driver::Handle>& handle) mutable -> Result<Driver::Handle> {
         absl::Status status;
         if (!handle.ok()) {
+          std::cout << "OpenDrive status not ok ......" << std::endl;
           status = handle.status();
         } else if (bound_spec.transform.valid()) {
+          std::cout << "OpenDrive status ok and transform valid ......" << std::endl;
           auto composed_transform = tensorstore::ComposeTransforms(
               std::move(handle->transform), std::move(bound_spec.transform));
           if (composed_transform.ok()) {
@@ -109,6 +111,7 @@ Future<Driver::Handle> OpenDriver(TransformedDriverSpec bound_spec,
 
         /// On failure, annotate status with spec.
         if (!status.ok()) {
+          std::cout << "OpenDrive status not ok ......" << std::endl;
           status = tensorstore::MaybeAnnotateStatus(
               std::move(status),
               tensorstore::StrCat(
@@ -126,7 +129,7 @@ Future<Driver::Handle> OpenDriver(TransformedDriverSpec bound_spec,
           }
           return status;
         }
-
+        std::cout << "OpenDrive status ok ......" << std::endl;
         // Move handle out of the `Future`.
         return std::move(handle);
       },

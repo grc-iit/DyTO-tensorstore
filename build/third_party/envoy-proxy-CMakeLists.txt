@@ -1,0 +1,77 @@
+set(CMAKE_MESSAGE_INDENT "[envoy] ")
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_DEFINITIONS)
+set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_OPTIONS)
+set_property(DIRECTORY PROPERTY COMPILE_OPTIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY INCLUDE_DIRECTORIES)
+set_property(DIRECTORY PROPERTY INCLUDE_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_DIRECTORIES)
+set_property(DIRECTORY PROPERTY LINK_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_OPTIONS)
+set_property(DIRECTORY PROPERTY LINK_OPTIONS "${_prop}")
+unset(_prop)
+unset(envoy_BINARY_DIR)
+unset(envoy_SOURCE_DIR)
+
+project("envoy")
+execute_process(
+  COMMAND ${Python3_EXECUTABLE} "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore/tools/cmake/run_bazel_to_cmake.py"
+        --extra-build=extraBUILD.bazel
+        --load-workspace "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore/build/bazel_workspace_info.pickle"
+        --cmake-project-name envoy
+        --cmake-binary-dir "${CMAKE_CURRENT_BINARY_DIR}"
+        --bazel-repo-name envoy_api
+        --build-rules-output "${CMAKE_CURRENT_BINARY_DIR}/build_rules.cmake"
+        --repo-mapping "@com_envoyproxy_protoc_gen_validate" "@local_proto_mirror"
+        --repo-mapping "@io_bazel_rules_go" "@local_proto_mirror"
+        --repo-mapping "@opencensus_proto" "@local_proto_mirror"
+        --repo-mapping "@com_github_cncf_xds" "@com_github_cncf_udpa"
+        --ignore-library=//bazel/cc_proto_descriptor_library:builddefs.bzl
+        --ignore-library=@com_github_grpc_grpc//bazel:python_rules.bzl
+        --target=//envoy/admin/v3:all
+        --target=//envoy/config/cluster/v3:all
+        --target=//envoy/config/core/v3:all
+        --target=//envoy/config/endpoint/v3:all
+        --target=//envoy/config/listener/v3:all
+        --target=//envoy/config/rbac/v3:all
+        --target=//envoy/config/route/v3:all
+        --target=//envoy/extensions/clusters/aggregate/v3:all
+        --target=//envoy/extensions/upstreams/tcp/v3:all
+        --target=//envoy/extensions/upstreams/http/v3:all
+        --target=//envoy/extensions/filters/common/fault/v3:all
+        --target=//envoy/extensions/filters/http/fault/v3:all
+        --target=//envoy/extensions/filters/http/rbac/v3:all
+        --target=//envoy/extensions/filters/http/router/v3:all
+        --target=//envoy/extensions/filters/http/stateful_session/v3:all
+        --target=//envoy/extensions/filters/network/http_connection_manager/v3:all
+        --target=//envoy/extensions/http/stateful_session/cookie/v3:all
+        --target=//envoy/extensions/load_balancing_policies/common/v3:all
+        --target=//envoy/extensions/load_balancing_policies/client_side_weighted_round_robin/v3:all
+        --target=//envoy/extensions/load_balancing_policies/cluster_provided/v3:all
+        --target=//envoy/extensions/load_balancing_policies/least_request/v3:all
+        --target=//envoy/extensions/load_balancing_policies/maglev/v3:all
+        --target=//envoy/extensions/load_balancing_policies/subset/v3:all
+        --target=//envoy/extensions/load_balancing_policies/pick_first/v3:all
+        --target=//envoy/extensions/load_balancing_policies/random/v3:all
+        --target=//envoy/extensions/load_balancing_policies/ring_hash/v3:all
+        --target=//envoy/extensions/load_balancing_policies/round_robin/v3:all
+        --target=//envoy/extensions/load_balancing_policies/wrr_locality/v3:all
+        --target=//envoy/extensions/transport_sockets/tls/v3:all
+        --target=//envoy/service/discovery/v3:all
+        --target=//envoy/service/load_stats/v3:all
+        --target=//envoy/service/status/v3:all
+        --target=//envoy/type/http/v3:all
+        --target=//envoy/type/matcher/v3:all
+        --target=//envoy/type/v3:all
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  COMMAND_ERROR_IS_FATAL ANY)
+include("${CMAKE_CURRENT_BINARY_DIR}/build_rules.cmake")

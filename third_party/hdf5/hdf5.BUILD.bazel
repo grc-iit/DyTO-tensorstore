@@ -1,0 +1,33 @@
+# Build HDF5
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+
+filegroup(
+    name = "hdf5_all_files",
+    srcs = glob(
+        ["**"],
+        exclude = ["*.bazel", "WORKSPACE"]),
+    visibility = ["//visibility:public"],
+)
+
+cmake(
+    name = "hdf5",
+    lib_source = ":hdf5_all_files",
+    cache_entries = {
+        "CMAKE_INSTALL_LIBDIR": "lib",
+        "HDF5_BUILD_HL_LIB": "ON",
+        "HDF5_ENABLE_Z_LIB_SUPPORT": "OFF",
+        "HDF5_BUILD_EXAMPLES": "OFF",
+        "HDF5_BUILD_TOOLS": "OFF",
+        "HDF5_BUILD_UTILS": "OFF",
+        "BUILD_TESTING": "OFF",
+    },
+    out_static_libs = [
+        "libhdf5.a",
+        "libhdf5_hl.a",
+    ],
+    out_shared_libs = [
+        "libhdf5.so",
+        "libhdf5_hl.so",
+    ],
+    visibility = ["//visibility:public"],
+)

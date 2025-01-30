@@ -23,6 +23,7 @@
 #include "tensorstore/data_type.h"
 #include "tensorstore/index.h"
 #include "tensorstore/rank.h"
+#include <iostream>
 
 namespace tensorstore {
 namespace internal_spec {
@@ -31,6 +32,7 @@ class SpecAccess {
  public:
   template <typename T>
   static decltype(auto) impl(T&& spec) {
+    std::cout << "SpecAccess::impl --- " << spec.ToJson().value() << std::endl;
     return (spec.impl_);
   }
 };

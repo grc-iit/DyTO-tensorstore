@@ -27,19 +27,24 @@ template <typename T>
 struct JsonBindableSerializer {
   using JsonValue = UnwrapResultType<decltype(std::declval<T>().ToJson())>;
   [[nodiscard]] static bool Encode(EncodeSink& sink, const T& value) {
+    std::cout << "JsonBindableSerializer Encode ......." << std::endl;
     Result<JsonValue> json_result = value.ToJson();
+    std::cout << "JsonBindableSerializer Encode after ToJson ......." << std::endl; 
     if (!json_result.ok()) {
       sink.Fail(std::move(json_result).status());
       return false;
     }
+    std::cout << "JsonBindableSerializer Encode Call Encode ......." << std::endl; 
     return serialization::Encode(sink, *json_result);
   }
 
   [[nodiscard]] static bool Decode(DecodeSource& source, T& value) {
+    std::cout << "JsonBindableSerializer Decode ......." << std::endl;
     JsonValue json;
     if (!serialization::Decode(source, json)) return false;
     TENSORSTORE_ASSIGN_OR_RETURN(value, T::FromJson(std::move(json)),
                                  (source.Fail(_), false));
+    std::cout << "JsonBindableSerializer Decode successfully ......." << std::endl; 
     return true;
   }
 };

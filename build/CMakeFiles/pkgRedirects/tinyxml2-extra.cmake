@@ -1,0 +1,2 @@
+
+set(TINYXML2_FOUND ON)

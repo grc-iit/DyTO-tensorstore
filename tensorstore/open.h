@@ -30,6 +30,7 @@
 #include "tensorstore/util/option.h"
 #include "tensorstore/util/result.h"
 #include "tensorstore/util/status.h"
+#include <iostream>
 
 namespace tensorstore {
 
@@ -92,6 +93,7 @@ template <typename Element = void, DimensionIndex Rank = dynamic_rank,
           ReadWriteMode Mode = ReadWriteMode::dynamic>
 Future<TensorStore<Element, Rank, Mode>> Open(
     Spec spec, TransactionalOpenOptions&& options) {
+      std::cout << "Inside tensorstore::Open(spec, TransactionalOpenOptions)" << std::endl;
   if constexpr (Mode != ReadWriteMode::dynamic) {
     if (options.read_write_mode == ReadWriteMode::dynamic) {
       options.read_write_mode = Mode;

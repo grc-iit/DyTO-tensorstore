@@ -1,0 +1,2 @@
+
+set(AWS_CHECKSUMS_FOUND ON)

@@ -65,6 +65,7 @@ class ZarrDriverSpec
   std::string metadata_key;
 
   constexpr static auto ApplyMembers = [](auto& x, auto f) {
+    std::cout << "ZarrDriverSpec::ApplyMembers" << std::endl;
     return f(internal::BaseCast<KvsDriverSpec>(x), x.partial_metadata,
              x.selected_field, x.metadata_key);
   };

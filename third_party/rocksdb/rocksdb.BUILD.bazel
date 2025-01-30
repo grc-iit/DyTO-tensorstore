@@ -1,0 +1,29 @@
+# Build rocksdb
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+
+filegroup(
+    name = "rocksdb_all_files",
+    srcs = glob(
+        ["**"],
+        exclude = ["*.bazel", "WORKSPACE"]),
+    visibility = ["//visibility:public"],
+)
+
+cmake(
+    name = "rocksdb",
+    lib_source = ":rocksdb_all_files",
+    cache_entries = {
+        "CMAKE_INSTALL_LIBDIR": "lib",
+        "WITH_GFLAGS": "OFF",
+        "WITH_TESTS": "OFF",
+        "WITH_TOOLS": "OFF",
+        "WITH_BENCHMARK_TOOLS": "OFF"
+    },
+    out_static_libs = [
+        "librocksdb.a",
+    ],
+    out_shared_libs = [
+        "librocksdb.so",
+    ],
+    visibility = ["//visibility:public"],
+)

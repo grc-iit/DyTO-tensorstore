@@ -121,3 +121,12 @@ tensorstore_cc_binary(
         "@com_google_riegeli//riegeli/bytes:writer",
     ],
 )
+
+tensorstore_cc_binary(
+    name = "test_hdf5",
+    srcs = ["test_hdf5.cc"],
+    deps = [
+        "//tensorstore",
+        "@hdf5//:hdf5",
+    ],
+)

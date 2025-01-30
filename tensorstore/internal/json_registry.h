@@ -38,6 +38,7 @@
 #include "tensorstore/internal/json_registry_fwd.h"
 #include "tensorstore/internal/json_registry_impl.h"
 #include "tensorstore/json_serialization_options.h"
+#include <iostream>
 
 namespace tensorstore {
 namespace internal {
@@ -78,7 +79,9 @@ class JsonRegistry {
   ///     jb::Object(jb::Member("id", GetRegistry().KeyBinder()),
   ///                Registry::RegisteredObjectBinder())
   ///
-  auto KeyBinder() const { return KeyBinderImpl{impl_}; }
+  auto KeyBinder() const { 
+    std::cout << "JsonRegistry::KeyBinder()" << std::endl;
+    return KeyBinderImpl{impl_}; }
 
   /// Forwards to the registered type-specific object binder.
   ///

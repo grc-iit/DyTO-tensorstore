@@ -82,6 +82,7 @@
 #include "tensorstore/util/span.h"
 #include "tensorstore/util/status.h"
 #include "tensorstore/util/str_cat.h"
+#include <iostream>
 
 #ifndef TENSORSTORE_KVS_DRIVER_DEBUG
 #define TENSORSTORE_KVS_DRIVER_DEBUG 0
@@ -105,6 +106,7 @@ MetadataOpenState::MetadataOpenState(Initializer initializer)
                        std::move(initializer.spec),
                        initializer.request.read_write_mode} {
   request_time_ = absl::Now();
+  std::cout << "****************MetadataOpenState::MetadataOpenState(Initializer)" << std::endl;
 }
 
 std::string MetadataOpenState::GetMetadataCacheKey() { return {}; }
@@ -768,6 +770,7 @@ Result<IndexTransform<>> KvsMetadataDriverBase::GetBoundSpecData(
 }
 
 absl::Status KvsDriverSpec::ApplyOptions(SpecOptions&& options) {
+  std::cout << "KvsDriverSpec::ApplyOptions" << std::endl;
   if (options.recheck_cached_data.specified()) {
     staleness.data = StalenessBound(options.recheck_cached_data);
   }
@@ -1247,9 +1250,13 @@ namespace {
 /// open the `kvstore::Driver` when the metadata cache is created.
 internal::CachePtr<MetadataCache> GetOrCreateMetadataCache(
     MetadataOpenState* state) {
+  std::cout << "internal_kvs_backend_chunk_driver:: GetOrCreateMetadataCache: open_state=" 
+    << std::endl;
   auto& base = *(PrivateOpenState*)state;  // Cast to private base
 
   auto& spec = *base.spec_;
+  std::cout << "internal_kvs_backend_chunk_driver:: GetOrCreateMetadataCache: metadata_cache_key=" 
+    << base.metadata_cache_key_ << std::endl;
   internal::EncodeCacheKey(&base.metadata_cache_key_, spec.store.driver,
                            typeid(*state), state->GetMetadataCacheKey());
   return internal::GetOrCreateAsyncInitializedCache<MetadataCache>(
@@ -1293,6 +1300,8 @@ Result<internal::Driver::Handle> OpenState::CreateDriverHandleFromMetadata(
 }
 
 Future<internal::Driver::Handle> OpenDriver(MetadataOpenState::Ptr state) {
+  std::cout << "internal_kvs_backend_chunk_driver:: OpenDriver: open_state=" 
+    << state.get() << std::endl;
   ABSL_LOG_IF(INFO, TENSORSTORE_KVS_DRIVER_DEBUG)
       << "OpenDriver: open_state=" << state.get();
   // TODO(jbms): possibly determine these options from the open options.

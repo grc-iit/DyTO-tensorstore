@@ -1,0 +1,45 @@
+set(CMAKE_MESSAGE_INDENT "[riegeli] ")
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_DEFINITIONS)
+set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_OPTIONS)
+set_property(DIRECTORY PROPERTY COMPILE_OPTIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY INCLUDE_DIRECTORIES)
+set_property(DIRECTORY PROPERTY INCLUDE_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_DIRECTORIES)
+set_property(DIRECTORY PROPERTY LINK_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_OPTIONS)
+set_property(DIRECTORY PROPERTY LINK_OPTIONS "${_prop}")
+unset(_prop)
+unset(riegeli_BINARY_DIR)
+unset(riegeli_SOURCE_DIR)
+
+project("riegeli")
+execute_process(
+  COMMAND ${Python3_EXECUTABLE} "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore/tools/cmake/run_bazel_to_cmake.py"
+        --load-workspace "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore/build/bazel_workspace_info.pickle"
+        --cmake-project-name riegeli
+        --cmake-binary-dir "${CMAKE_CURRENT_BINARY_DIR}"
+        --bazel-repo-name com_google_riegeli
+        --build-rules-output "${CMAKE_CURRENT_BINARY_DIR}/build_rules.cmake"
+        --repo-mapping "@zlib" "@net_zlib"
+        --repo-mapping "@bzip2" "@org_sourceware_bzip2"
+        --repo-mapping "@xz" "@org_tukaani_xz"
+        "--include-package=riegeli/**"
+        "--exclude-package=riegeli/brotli/**"
+        "--exclude-package=riegeli/chunk_encoding/**"
+        "--exclude-package=riegeli/lz4/**"
+        "--exclude-package=riegeli/records/**"
+        "--exclude-package=riegeli/snappy/**"
+        "--exclude-package=riegeli/tensorflow/**"
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  COMMAND_ERROR_IS_FATAL ANY)
+include("${CMAKE_CURRENT_BINARY_DIR}/build_rules.cmake")

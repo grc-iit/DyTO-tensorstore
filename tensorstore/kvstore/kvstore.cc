@@ -64,6 +64,7 @@
 #include "tensorstore/util/quote_string.h"
 #include "tensorstore/util/result.h"
 #include "tensorstore/util/status.h"
+#include <iostream>
 
 using ::tensorstore::internal::IntrusivePtr;
 
@@ -149,6 +150,7 @@ namespace kvstore {
 Driver::~Driver() = default;
 
 Future<KvStore> Open(Spec spec, OpenOptions&& options) {
+  std::cout << "Inside tensorstore::kvstore::Open(Spec spec, OpenOptions&& options)" << std::endl;
   if (!spec.valid()) {
     return absl::InvalidArgumentError("Cannot open null kvstore spec");
   }
@@ -182,6 +184,7 @@ OpenDriverCache& GetOpenDriverCache() {
 }  // namespace
 
 Future<DriverPtr> Open(DriverSpecPtr spec, DriverOpenOptions&& options) {
+  std::cout << "Inside tensorstore::kvstore::Open(DriverSpecPtr spec, DriverOpenOptions&& options)" << std::endl;
   TENSORSTORE_RETURN_IF_ERROR(spec.BindContext(options.context));
 
   std::string cache_identifier;

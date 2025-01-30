@@ -1,0 +1,280 @@
+$schema: http://json-schema.org/draft-07/schema#
+$id: driver/hdf5
+allOf:
+- $ref: KeyValueStoreBackedChunkDriver
+- type: object
+  properties:
+    driver:
+      const: hdf5
+    dataset:
+      type: string
+      title: HDF5 Dataset path
+      description: |
+        Path to the dataset within the HDF5 file. If not specified, the root
+    metadata:
+      title: hdf5 dataset metadata.
+      description: |
+        Specifies constraints on the dataset metadata.
+      allOf:
+      - type: object
+        properties:
+          shape:
+            type: array
+            items:
+              type: integer
+              minimum: 0
+            examples:
+            - [500, 500, 500]
+          chunks:
+            type: array
+            items:
+              type: integer
+              minimum: 1
+            title: Chunk dimensions.
+            description: |
+              Specifies the chunk size for each chunked dimension.  Must have
+              the same length as `.shape`.  If not specified when creating a new
+              array, the chunk dimensions are chosen automatically according to
+              the `Schema.chunk_layout`.
+            examples:
+            - [64, 64, 64]
+          dtype:
+            title: Specifies the scalar or structured data type.
+            description: |
+              Refer to the `Zarr data type encoding specification
+              <https://zarr.readthedocs.io/en/stable/spec/v2.html#data-type-encoding>`_.
+              As an extension, TensorStore also supports :json:`"bfloat16"` for
+              specifying the `bfloat16
+              <https://en.wikipedia.org/wiki/Bfloat16_floating-point_format>`_
+              data type with little endian byte order.
+              TensorStore also supports experimental 8-bit floating-point types including 
+              :json:`"float8_e4m3fn"`, :json:`"float8_e4m3fnuz"`, :json:`"float8_e4m3b11fnuz"`, 
+              :json:`"float8_e5m2"`, :json:`"float8_e5m2fnuz"` described in `ml_dtypes 
+              <https://github.com/jax-ml/ml_dtypes#float8_e4m3b11fnuz>`_ 
+              with little endian byte order.
+              4-bit integer type padded to 1 byte is supported as :json:`"int4"` by 
+              specifying `int4 <https://github.com/jax-ml/ml_dtypes#int4-and-uint4>`_.
+          fill_value:
+            title: Specifies the fill value.
+            description: When creating a new array, defaults to :json:`null`.
+          order:
+            enum:
+            - C
+            - F
+            title: Specifies the data layout for encoded chunks.
+            description: |
+              :json:`"C"` for C order, :json:`"F"` for Fortran order.  When
+              creating a new array, defaults to :json:`"C"`.
+      - $ref: "#codec-properties"
+      - type: object
+        properties:
+          dimension_separator:
+            enum:
+              - "."
+              - "/"
+            title: Specifies the encoding of chunk indices into key-value store keys.
+            description: |
+              The default value of :json:`"."` corresponds to the default encoding
+              used by Zarr, while :json:`"/"` corresponds to the encoding used by
+              :py:obj:`zarr.storage.NestedDirectoryStore`.
+    metadata_key:
+      type: string
+      default: ".zarray"
+      title: Specifies the key under which to store the array metadata in JSON format.
+      description: |
+        By default, the array metadata is stored under the :file:`.zarray` key as
+        required by the `Zarr storage specification
+        <https://zarr.readthedocs.io/en/stable/spec/v2.html#metadata>`__.  In
+        rare cases it may be useful to specify a non-default value,
+        e.g. :json:`"zarray"` to avoid problems caused by the leading dot.
+        However, be aware that specifying a non-default value breaks
+        compatibility with other zarr implementations.
+    key_encoding:
+      enum:
+      - .
+      - /
+      type: string
+      default: .
+      title: Specifies the encoding of chunk indices into key-value store keys.
+      description: |
+        Deprecated.  Equivalent to specifying `.metadata.dimension_separator`.
+examples:
+- driver: zarr
+  kvstore:
+    driver: gcs
+    bucket: my-bucket
+    path: path/to/array/
+  key_encoding: .
+  metadata:
+    shape:
+    - 1000
+    - 1000
+    chunks:
+    - 100
+    - 100
+    dtype: <i2
+    order: C
+    compressor:
+      id: blosc
+      shuffle: -1
+      clevel: 5
+      cname: lz4
+definitions:
+  codec-properties:
+    $id: '#codec-properties'
+    type: object
+    properties:
+      compressor:
+        oneOf:
+        - $ref: 'driver/zarr/Compressor'
+        - type: 'null'
+        description: |
+          Specifies the chunk compressor.  Specifying :json:`null` disables
+          compression.  When creating a new array, if not specified, the default
+          compressor of :json:`{"id": "blosc"}` is used.
+        title: Specifies the chunk compression method.
+      filters:
+        type: 'null'
+        title: Specifies the filters to apply to chunks.
+        description: |
+          When encoding chunk, filters are applied before the compressor.
+          Currently, filters are not supported.
+  codec:
+    $id: 'driver/zarr/Codec'
+    allOf:
+      - $ref: Codec
+      - type: object
+        properties:
+          driver:
+            const: "zarr"
+      - $ref: "#codec-properties"
+  compressor:
+    $id: 'driver/zarr/Compressor'
+    title: Compressor
+    type: object
+    description: |
+      The `.id` member identifies the compressor.  The remaining members are
+      specific to the compressor.
+    properties:
+      id:
+        type: string
+        description: Identifies the compressor.
+    required:
+    - id
+  compressor-zlib:
+    $id: 'driver/zarr/Compressor/zlib'
+    description: |
+      Specifies `zlib <https://zlib.net>`_ compression with a zlib or gzip
+      header.
+    allOf:
+    - $ref: 'driver/zarr/Compressor'
+    - type: object
+      properties:
+        id:
+          enum:
+          - zlib
+          - gzip
+        level:
+          type: integer
+          minimum: 0
+          maximum: 9
+          default: 1
+          title: Specifies the zlib compression level to use.
+          description: |
+            Level 0 indicates no compression (fastest), while level 9 indicates
+            the best compression ratio (slowest).
+    examples:
+    - id: gzip
+      level: 9
+  compressor-blosc:
+    $id: 'driver/zarr/Compressor/blosc'
+    description: Specifies `Blosc <https://github.com/Blosc/c-blosc>`_ compression.
+    allOf:
+    - $ref: 'driver/zarr/Compressor'
+    - type: object
+      properties:
+        id:
+          const: blosc
+        cname:
+          enum:
+          - blosclz
+          - lz4
+          - lz4hc
+          - snappy
+          - zlib
+          - zstd
+          default: lz4
+          description: Specifies the compression method used by Blosc.
+        clevel:
+          type: integer
+          minimum: 0
+          maximum: 9
+          default: 5
+          title: Specifies the Blosc compression level to use.
+          description: Higher values are slower but achieve a higher compression ratio.
+        shuffle:
+          oneOf:
+          - const: -1
+            title: Automatic shuffle.
+            description: |
+              Bit-wise shuffle if the element size is 1 byte, otherwise byte-wise
+              shuffle.
+          - const: 0
+            title: No shuffle
+          - const: 1
+            title: Byte-wise shuffle
+          - const: 2
+            title: Bit-wise shuffle
+          default: -1
+        blocksize:
+          type: integer
+          minimum: 0
+          title: Specifies the Blosc blocksize.
+          description: |
+            The default value of 0 causes the block size to be chosen
+            automatically.
+    examples:
+    - id: blosc
+      cname: blosclz
+      clevel: 9
+      shuffle: 2
+  compressor-bz2:
+    $id: 'driver/zarr/Compressor/bz2'
+    description: Specifies `bzip2 <https://sourceware.org/bzip2/>`_ compression.
+    allOf:
+    - $ref: 'driver/zarr/Compressor'
+    - type: object
+      properties:
+        id:
+          const: bz2
+        level:
+          type: integer
+          minimum: 1
+          maximum: 9
+          default: 1
+          title: Specifies the bzip2 buffer size/compression level to use.
+          description: |
+            A level of 1 indicates the smallest buffer (fastest), while level 9
+            indicates the best compression ratio (slowest).
+  compressor-zstd:
+    $id: 'driver/zarr/Compressor/zstd'
+    description: |
+      Specifies `Zstd <https://facebook.github.io/zstd>`_ compression.
+    allOf:
+    - $ref: 'driver/zarr/Compressor'
+    - type: object
+      properties:
+        id:
+          const: zstd
+        level:
+          type: integer
+          minimum: -131072
+          maximum: 22
+          default: 1
+          title: Specifies the compression level to use.
+          description: |
+            A higher compression level provides improved density but reduced
+            compression speed.
+    examples:
+    - id: zstd
+      level: 6

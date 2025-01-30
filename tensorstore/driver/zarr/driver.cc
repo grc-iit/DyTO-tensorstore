@@ -401,6 +401,7 @@ Result<SharedArray<const void>> ZarrDriver::GetFillValue(
 
 Future<internal::Driver::Handle> ZarrDriverSpec::Open(
     DriverOpenRequest request) const {
+      std::cout << "ZarrDriverSpec::Open....." << std::endl;
   return ZarrDriver::Open(this, std::move(request));
 }
 

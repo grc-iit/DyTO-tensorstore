@@ -1,0 +1,2 @@
+
+set(NLOHMANN_JSON_FOUND ON)

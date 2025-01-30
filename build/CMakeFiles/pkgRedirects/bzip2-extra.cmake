@@ -1,0 +1,2 @@
+
+set(BZIP2_FOUND ON)

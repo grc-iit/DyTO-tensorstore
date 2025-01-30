@@ -1,0 +1,35 @@
+set(CMAKE_MESSAGE_INDENT "[BZip2] ")
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_DEFINITIONS)
+set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_OPTIONS)
+set_property(DIRECTORY PROPERTY COMPILE_OPTIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY INCLUDE_DIRECTORIES)
+set_property(DIRECTORY PROPERTY INCLUDE_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_DIRECTORIES)
+set_property(DIRECTORY PROPERTY LINK_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_OPTIONS)
+set_property(DIRECTORY PROPERTY LINK_OPTIONS "${_prop}")
+unset(_prop)
+unset(bzip2_BINARY_DIR)
+unset(bzip2_SOURCE_DIR)
+
+project("BZip2")
+execute_process(
+  COMMAND ${Python3_EXECUTABLE} "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore/tools/cmake/run_bazel_to_cmake.py"
+        --load-workspace "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore/build/bazel_workspace_info.pickle"
+        --cmake-project-name BZip2
+        --cmake-binary-dir "${CMAKE_CURRENT_BINARY_DIR}"
+        --bazel-repo-name org_sourceware_bzip2
+        --build-rules-output "${CMAKE_CURRENT_BINARY_DIR}/build_rules.cmake"
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  COMMAND_ERROR_IS_FATAL ANY)
+include("${CMAKE_CURRENT_BINARY_DIR}/build_rules.cmake")

@@ -149,6 +149,7 @@ template <typename Spec>
 class DriverRegistration {
  public:
   DriverRegistration() {
+    std::cout << "DriverRegistration" << std::endl;
     GetDriverRegistry().Register<Spec>(Spec::id,
                                        internal_json_binding::DefaultBinder<>);
     serialization::Register<DriverSpecPtr, Spec>();

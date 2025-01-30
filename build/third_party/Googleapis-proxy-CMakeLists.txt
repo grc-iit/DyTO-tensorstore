@@ -1,0 +1,42 @@
+set(CMAKE_MESSAGE_INDENT "[Googleapis] ")
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_DEFINITIONS)
+set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_OPTIONS)
+set_property(DIRECTORY PROPERTY COMPILE_OPTIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY INCLUDE_DIRECTORIES)
+set_property(DIRECTORY PROPERTY INCLUDE_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_DIRECTORIES)
+set_property(DIRECTORY PROPERTY LINK_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_OPTIONS)
+set_property(DIRECTORY PROPERTY LINK_OPTIONS "${_prop}")
+unset(_prop)
+unset(googleapis_BINARY_DIR)
+unset(googleapis_SOURCE_DIR)
+
+project("Googleapis")
+execute_process(
+  COMMAND ${Python3_EXECUTABLE} "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore/tools/cmake/run_bazel_to_cmake.py"
+        --load-workspace "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore/build/bazel_workspace_info.pickle"
+        --cmake-project-name Googleapis
+        --cmake-binary-dir "${CMAKE_CURRENT_BINARY_DIR}"
+        --bazel-repo-name com_google_googleapis
+        --build-rules-output "${CMAKE_CURRENT_BINARY_DIR}/build_rules.cmake"
+        --repo-mapping "@com_google_googleapis_imports" "@local_proto_mirror"
+        --repo-mapping "@com_google_protobuf_upb" "@com_google_protobuf"
+        --exclude-target=//:build_gen
+        --target=//google/api:all
+        --target=//google/api/expr/v1alpha1:all
+        --target=//google/rpc:all
+        --target=//google/storage/v2:all
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  COMMAND_ERROR_IS_FATAL ANY)
+include("${CMAKE_CURRENT_BINARY_DIR}/build_rules.cmake")

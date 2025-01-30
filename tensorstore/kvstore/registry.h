@@ -41,6 +41,7 @@
 #include "tensorstore/util/garbage_collection/garbage_collection.h"
 #include "tensorstore/util/result.h"
 #include "tensorstore/util/status.h"
+#include <iostream>
 
 namespace tensorstore {
 namespace internal_kvstore {
@@ -160,6 +161,7 @@ class RegisteredDriverSpec : public Parent {
   }
 
   constexpr static auto ApplyMembers = [](auto&& x, auto f) {
+    std::cout << "internal_kvstore's RegisteredDriverSpec DriverSpec::ApplyMembers....." << std::endl;
     return f(x.context_spec_, x.data_);
   };
 

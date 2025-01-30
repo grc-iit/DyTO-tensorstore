@@ -859,6 +859,10 @@ struct MemberBinderImpl {
     if constexpr (kDropDiscarded) {
       if (j_member.is_discarded()) return absl::OkStatus();
     }
+    if (j_member.is_discarded() == false) {
+      std::cout << "MemberBinderImpl::operator() is_loading=" << is_loading << " "
+              << "name=" << name << " j_member=" << j_member << std::endl;
+    }
     auto status = binder(is_loading, options, obj, &j_member);
     return status.ok()
                ? status

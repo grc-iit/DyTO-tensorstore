@@ -1,0 +1,2 @@
+
+set(RE2_FOUND ON)

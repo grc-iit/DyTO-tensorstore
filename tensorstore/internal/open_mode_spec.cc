@@ -87,6 +87,7 @@ TENSORSTORE_DEFINE_JSON_BINDER(
         })));
 
 absl::Status OpenModeSpec::ApplyOptions(const SpecOptions& options) {
+  std::cout << "OpenModeSpec::ApplyOptions. value =" << (options.open_mode)<< std::endl;
   if (options.open_mode != OpenMode{}) {
     const OpenMode open_mode = options.open_mode;
     open = (open_mode & OpenMode::open) == OpenMode::open;

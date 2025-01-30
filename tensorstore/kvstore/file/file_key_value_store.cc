@@ -900,6 +900,7 @@ void FileKeyValueStore::ListImpl(ListOptions options, ListReceiver receiver) {
 }
 
 Future<kvstore::DriverPtr> FileKeyValueStoreSpec::DoOpen() const {
+  std::cout << "FileKeyValueStoreSpec:: DoOpen" << std::endl;
   auto driver_ptr = internal::MakeIntrusivePtr<FileKeyValueStore>();
   driver_ptr->spec_ = data_;
   return driver_ptr;

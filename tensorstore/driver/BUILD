@@ -23,6 +23,7 @@ DRIVERS = [
     "virtual_chunked",
     "zarr",
     "zarr3",
+    "hdf5",
 ]
 
 DOCTEST_SOURCES = glob([

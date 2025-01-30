@@ -52,6 +52,7 @@
 #include "tensorstore/util/result.h"
 #include "tensorstore/util/status.h"
 #include "tensorstore/util/str_cat.h"
+#include <iostream>
 
 namespace tensorstore {
 namespace internal {
@@ -96,6 +97,7 @@ Result<TransformedDriverSpec> DriverSpec::GetBase(
 }
 
 absl::Status ApplyOptions(DriverSpec::Ptr& spec, SpecOptions&& options) {
+  std::cout << "DriverSpec::ApplyOptions....spec.schema=" << spec->schema.ToJson().value() << std::endl;
   if (spec->use_count() != 1) spec = spec->Clone();
   return const_cast<DriverSpec&>(*spec).ApplyOptions(std::move(options));
 }
@@ -248,11 +250,13 @@ TENSORSTORE_DEFINE_JSON_BINDER(
                                     registry.KeyBinder())),
           jb::Projection(
               [](auto& obj) -> DriverSpec& {
+                std::cout << "TransformedDriverSpecJsonBinder: obj.driver_spec=" << std::endl;
                 return const_cast<DriverSpec&>(*obj.driver_spec);
               },
               jb::Sequence(
                   jb::Initialize([](DriverSpec* x) {
                     x->context_binding_state_ = ContextBindingState::unbound;
+                    std::cout << "TransformedDriverSpecJsonBinder: Initialize for DriverSpec" << std::endl;
                   }),
                   jb::Member("context",
                              jb::Projection(

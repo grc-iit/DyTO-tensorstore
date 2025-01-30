@@ -1,0 +1,2 @@
+
+set(AWS_C_CAL_FOUND ON)

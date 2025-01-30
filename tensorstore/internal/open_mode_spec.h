@@ -23,6 +23,7 @@
 #include "tensorstore/internal/json_binding/bindable.h"
 #include "tensorstore/open_mode.h"
 #include "tensorstore/open_options.h"
+#include <iostream>
 
 namespace tensorstore {
 namespace internal {
@@ -46,6 +47,7 @@ struct OpenModeSpec {
 
   // For compatibility with `ContextBindingTraits`.
   static constexpr auto ApplyMembers = [](auto& x, auto f) {
+    std::cout << "OpenModeSpec::ApplyMembers---x.open="<< x.open << ", x.create=" << x.create << std::endl;
     return f(x.open, x.create, x.delete_existing, x.assume_metadata,
              x.assume_cached_metadata);
   };

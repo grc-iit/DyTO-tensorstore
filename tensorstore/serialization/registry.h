@@ -133,11 +133,13 @@ void Register() {
       typeid(Derived),
       Derived::id,
       +[](EncodeSink& sink, const void* value) -> bool {
+        std::cout << "Serialization Encode" << std::endl;
         return serialization::Encode(
             sink, *static_cast<const Derived*>(
                       static_cast<const Ptr*>(value)->get()));
       },
       +[](DecodeSource& source, void* value) -> bool {
+        std::cout << "Serialization Decode" << std::endl;
         auto& ptr = *static_cast<Ptr*>(value);
         ptr.reset(new Derived);
         return serialization::Decode(

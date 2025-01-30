@@ -1,0 +1,2 @@
+
+set(AWS_CRT_CPP_FOUND ON)

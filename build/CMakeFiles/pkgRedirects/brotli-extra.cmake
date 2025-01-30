@@ -1,0 +1,2 @@
+
+set(BROTLI_FOUND ON)

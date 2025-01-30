@@ -32,6 +32,7 @@
 #include "tensorstore/util/garbage_collection/fwd.h"
 #include "tensorstore/util/option.h"
 #include "tensorstore/util/result.h"
+#include <iostream>
 
 namespace tensorstore {
 namespace kvstore {
@@ -204,13 +205,17 @@ class Spec {
   /// Constructs from a driver with empty path.
   ///
   /// \id driver
-  Spec(DriverSpecPtr driver) : driver(std::move(driver)) {}
+  Spec(DriverSpecPtr driver) : driver(std::move(driver)) {
+    std::cout << "kvstore::Spec::Spec(DriverSpecPtr driver)" << std::endl;
+  }
 
   /// Constructs a path from the specified driver and key prefix.
   ///
   /// \id driver, path
   explicit Spec(DriverSpecPtr driver, std::string path)
-      : driver(std::move(driver)), path(std::move(path)) {}
+      : driver(std::move(driver)), path(std::move(path)) {
+        std::cout << "kvstore::Spec::Spec(DriverSpecPtr driver, path)" << std::endl;
+      }
 
   /// Appends `suffix` to the `path`.
   ///
@@ -233,6 +238,7 @@ class Spec {
 
   // ApplyMembers support.
   static constexpr auto ApplyMembers = [](auto& x, auto f) {
+    std::cout << "kvstore::Spec::ApplyMembers:" << std::endl;
     return f(x.driver, x.path);
   };
 

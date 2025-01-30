@@ -54,6 +54,7 @@
 #include "tensorstore/util/future.h"
 #include "tensorstore/util/garbage_collection/std_optional.h"  // IWYU pragma: keep
 #include "tensorstore/util/result.h"
+#include <iostream>
 
 namespace tensorstore {
 namespace internal_kvs_backed_chunk_driver {
@@ -82,6 +83,7 @@ struct KvsDriverSpec : public internal::DriverSpec,
   FillValueMode fill_value_mode;
 
   static constexpr auto ApplyMembers = [](auto& x, auto f) {
+    std::cout << "KvsDriverSpec::ApplyMembers--" << x.store.ToJson().value() << std::endl;
     return f(internal::BaseCast<internal::DriverSpec>(x),
              internal::BaseCast<internal::OpenModeSpec>(x), x.store,
              x.data_copy_concurrency, x.cache_pool, x.metadata_cache_pool,
@@ -928,6 +930,7 @@ class RegisteredKvsDriver
   /// terms of `internal_kvs_backed_chunk_driver::OpenDriver`.
   static Future<internal::Driver::Handle> Open(
       const DerivedSpec* spec, internal::DriverOpenRequest request) {
+        std::cout << "RegisteredKvsDriver::Open, called by derivedSpec...." << std::endl;
     return internal_kvs_backed_chunk_driver::OpenDriver(
         internal_kvs_backed_chunk_driver::MetadataOpenState::Ptr(
             new typename Derived::OpenState(

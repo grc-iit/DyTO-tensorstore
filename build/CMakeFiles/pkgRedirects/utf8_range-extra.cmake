@@ -1,0 +1,2 @@
+
+set(UTF8_RANGE_FOUND ON)

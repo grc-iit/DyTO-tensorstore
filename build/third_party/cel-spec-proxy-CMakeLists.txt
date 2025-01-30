@@ -1,0 +1,57 @@
+set(CMAKE_MESSAGE_INDENT "[cel-spec] ")
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_DEFINITIONS)
+set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_OPTIONS)
+set_property(DIRECTORY PROPERTY COMPILE_OPTIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY INCLUDE_DIRECTORIES)
+set_property(DIRECTORY PROPERTY INCLUDE_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_DIRECTORIES)
+set_property(DIRECTORY PROPERTY LINK_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_OPTIONS)
+set_property(DIRECTORY PROPERTY LINK_OPTIONS "${_prop}")
+unset(_prop)
+unset(cel-spec_BINARY_DIR)
+unset(cel-spec_SOURCE_DIR)
+
+project("cel-spec")
+execute_process(
+  COMMAND ${Python3_EXECUTABLE} "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore/tools/cmake/run_bazel_to_cmake.py"
+        --load-workspace "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore/build/bazel_workspace_info.pickle"
+        --cmake-project-name cel-spec
+        --cmake-binary-dir "${CMAKE_CURRENT_BINARY_DIR}"
+        --bazel-repo-name cel-spec
+        --build-rules-output "${CMAKE_CURRENT_BINARY_DIR}/build_rules.cmake"
+        --repo-mapping "@io_bazel_rules_go" "@local_proto_mirror"
+        --target=//proto/cel/expr:expr_proto
+        --target=//proto/cel/expr:syntax_proto
+        --target=//proto/cel/expr:checked_proto
+        --target=//proto/cel/expr:value_proto
+        --target=//proto/cel/expr:eval_proto
+        --target=//proto/cel/expr:explain_proto
+        --target=//proto/cel/expr:syntax_cc_proto
+        --target=//proto/cel/expr:checked_cc_proto
+        --target=//proto/cel/expr:value_cc_proto
+        --target=//proto/cel/expr:eval_cc_proto
+        --target=//proto/cel/expr:explain_cc_proto
+        --target=//proto/cel/expr:syntax_proto__upb_library
+        --target=//proto/cel/expr:checked_proto__upb_library
+        --target=//proto/cel/expr:value_proto__upb_library
+        --target=//proto/cel/expr:eval_proto__upb_library
+        --target=//proto/cel/expr:explain_proto__upb_library
+        --target=//proto/cel/expr:syntax_proto__upbdefs_library
+        --target=//proto/cel/expr:checked_proto__upbdefs_library
+        --target=//proto/cel/expr:value_proto__upbdefs_library
+        --target=//proto/cel/expr:eval_proto__upbdefs_library
+        --target=//proto/cel/expr:explain_proto__upbdefs_library
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  COMMAND_ERROR_IS_FATAL ANY)
+include("${CMAKE_CURRENT_BINARY_DIR}/build_rules.cmake")

@@ -1,0 +1,30 @@
+set(CMAKE_MESSAGE_INDENT "[absl] ")
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_DEFINITIONS)
+set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY COMPILE_OPTIONS)
+set_property(DIRECTORY PROPERTY COMPILE_OPTIONS "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY INCLUDE_DIRECTORIES)
+set_property(DIRECTORY PROPERTY INCLUDE_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_DIRECTORIES)
+set_property(DIRECTORY PROPERTY LINK_DIRECTORIES "${_prop}")
+unset(_prop)
+
+get_property(_prop DIRECTORY "/home/yejie/SCS_lab/DyTO/DyTO/tensorstore" PROPERTY LINK_OPTIONS)
+set_property(DIRECTORY PROPERTY LINK_OPTIONS "${_prop}")
+unset(_prop)
+unset(absl_BINARY_DIR)
+unset(absl_SOURCE_DIR)
+set(ABSL_PROPAGATE_CXX_STD "ON")
+set(ABSL_BUILD_TESTING "OFF")
+set(BUILD_TESTING "OFF")
+set(ABSL_BUILD_TEST_HELPERS "ON")
+set(ABSL_USE_EXTERNAL_GOOGLETEST "ON")
+set(ABSL_FIND_GOOGLETEST "ON")
+include("${CMAKE_CURRENT_LIST_DIR}/orig_CMakeLists.cmake")

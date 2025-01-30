@@ -1,0 +1,2 @@
+
+set(CEL-SPEC_FOUND ON)

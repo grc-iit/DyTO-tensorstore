@@ -1,0 +1,2 @@
+
+set(AWS_C_MQTT_FOUND ON)

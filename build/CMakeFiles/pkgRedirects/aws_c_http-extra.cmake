@@ -1,0 +1,2 @@
+
+set(AWS_C_HTTP_FOUND ON)
